@@ -1,24 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Navbar from "./Navbar/Navbar";
+import { Route, Routes, Navigate } from "react-router-dom";
+import Userform from "./Components/Userform/Userform";
+import Userlist from "./Components/Userlist/Userlist";
+import Userupdate from "./Components/Userupdate/Userupdate";
+import Userview from "./Components/Userview/Userview";
+import ListDemo from "./demo/ListDemo";
+import PermissionScreen from "./demo/PermissionScreen";
+import PermissionsList from "./Components/Permissions/PermissionsList";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar />
+      <Routes>
+        <Route path={`/`} element={<Navigate to={"/comp/userlist"} />} />
+        <Route path={"/comp/userform"} element={<Userform />} />
+        <Route path={"/comp/userlist"} element={<Userlist />} />
+        <Route path={`/comp/userview/:userId`} element={<Userview />} />
+        <Route path={`/comp/userupdate/:userId`} element={<Userupdate />} />
+
+        <Route path="/comp/permissions" element={<PermissionsList />} />
+
+        {/* <Route path={`/comp/new`} element={<ListDemo />} />
+        <Route path={`/comp/new-per`} element={<PermissionScreen />} /> */}
+      </Routes>
+    </>
   );
 }
 
