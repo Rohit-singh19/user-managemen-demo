@@ -65,16 +65,40 @@ let Userlist = () => {
       });
     }
   };
+
+  function searchInTable(query, array) {
+    const results = [];
+
+    for (let i = 0; i < array.length; i++) {
+      const item = array[i];
+
+      for (let key in item) {
+        if (item.hasOwnProperty(key) && typeof item[key] === "string") {
+          if (item[key].toLowerCase().includes(query.toLowerCase())) {
+            results.push(item);
+            break;
+          }
+        }
+      }
+    }
+
+    return results;
+  }
+
   //searchfunction
 
   let searchUser = (e) => {
-    setQuery({ ...query, text: e.target.value });
-    let theUsers = state.users.filter((user) => {
-      return user.name.toLowerCase().includes(e.target.value.toLowerCase());
-    });
+    let value = e.target.value;
+
+    setQuery({ ...query, text: value });
+
+    if (value?.trim() === "") return;
+
+    const searchResult = searchInTable(value || "", state.users);
+
     setState({
       ...state,
-      filteredUsers: theUsers,
+      filteredUsers: searchResult,
     });
   };
 
@@ -97,8 +121,8 @@ let Userlist = () => {
           </button>
         </Link>
       </div>
-      <div className="container mx-auto mt-5 px-10">
-        <form className="mb-3">
+      <div className="container mx-auto mt-5 px-10 ">
+        <form className="mb-3 max-w-sm">
           <div className="relative mb-4 flex w-full flex-wrap items-stretch">
             <input
               type="text"
@@ -106,7 +130,7 @@ let Userlist = () => {
               value={query.text}
               onChange={searchUser}
               className="relative m-0 -mr-0.5 block w-[1px] min-w-0  flex-auto rounded-l border border-solid border-neutral-300  bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:focus:border-primary"
-              placeholder="Search"
+              placeholder="Search..."
               aria-label="Search"
               aria-describedby="button-addon1"
             />
@@ -203,7 +227,7 @@ let Userlist = () => {
               }
             </table>
             <nav>
-              <div className="container-lg mt-5">
+              <div className="container-lg my-5">
                 <ul className="flex rounded-lg font-[Poppins] ms-2">
                   <li>
                     <button

@@ -5,106 +5,45 @@
       "name": "Ervin Howell",
       "username": "Antonette",
       "email": "Shanna@melissa.tv",
-      "role": "Business analyst"
+      "role": "Admin"
     },
     {
       "id": 3,
       "name": "Clementine Bauch",
       "username": "Samantha",
       "email": "Nathan@yesenia.net",
-      "role": "IT trainer"
+      "role": "Admin"
     },
     {
       "id": 4,
       "name": "Patricia Lebsack",
       "username": "Karianne",
       "email": "Julianne.OConner@kory.org",
-      "role": "system analyst"
+      "role": "Super Admin"
     },
     {
       "id": 5,
       "name": "Chelsey Dietrich",
       "username": "Kamren",
       "email": "Lucio_Hettinger@annie.ca",
-      "role": "Web developer"
-    },
-    {
-      "id": 6,
-      "name": "Mrs. Dennis Schulist",
-      "username": "Leopoldo_Corkery",
-      "email": "Karley_Dach@jasper.info",
-      "role": "Project manager"
-    },
-    {
-      "id": 7,
-      "name": "Kurtis Weissnat",
-      "username": "Elwyn.Skiles",
-      "email": "Telly.Hoeger@billy.biz",
-      "role": "Data scientist"
-    },
-    {
-      "id": 8,
-      "name": "Nicholas Runolfsdottir V",
-      "username": "Maxime_Nienow",
-      "email": "Sherwood@rosamond.me",
-      "role": "Data engineer"
-    },
-    {
-      "id": 9,
-      "name": "Glenna Reichert",
-      "username": "Delphine",
-      "email": "Chaim_McDermott@dana.io",
-      "role": "Devops engineer"
-    },
-    {
-      "id": 10,
-      "name": "Clementina DuBuque",
-      "username": "Moriah.Stanton",
-      "email": "Rey.Padberg@karina.biz",
-      "role": "Cloud engineer"
-    },
-    {
-      "name": "rajeshram",
-      "username": "heartist",
-      "email": "rajeshui1998@gmail.com",
-      "role": "software engineer",
-      "id": 11
-    },
-    {
-      "name": "ranjith",
-      "username": "rockstar",
-      "email": "ranjith@gmail.com",
-      "role": "ba-english",
-      "id": 12
-    },
-    {
-      "name": "Rohit",
-      "username": "rohit 19",
-      "email": "test@gmail.com",
-      "role": "Edit",
-      "id": 13
+      "role": "User"
     }
   ],
   "permissions": [
     {
-      "name": "Create",
-      "description": "Permission to create new content",
+      "name": "Super Admin",
+      "description": "Permission to create, delete and update",
       "id": 1
     },
     {
       "id": 2,
-      "name": "Edit",
-      "description": "Permission to edit existing content"
+      "name": "Admin",
+      "description": "Permission to create and edit existing content"
     },
     {
-      "name": "Delete",
-      "description": "Permission to delete content",
+      "name": "User",
+      "description": "Permission to read content",
       "id": 3
-    },
-    {
-      "id": 4,
-      "name": "View",
-      "description": "Permission to view content"
     }
   ]
 }

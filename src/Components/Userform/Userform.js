@@ -112,6 +112,9 @@ let Userform = () => {
                   onChange={updateInput}
                   placeholder="role"
                 >
+                  <option value="" selected>
+                    select role
+                  </option>
                   {roleList?.map((ele, i) => (
                     <option key={`${ele?.name}-${i}`} value={ele?.name}>
                       {ele?.name}
