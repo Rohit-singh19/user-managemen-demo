@@ -103,6 +103,7 @@ describe("PermissionsList", () => {
       id: 1,
       name: "New Permission",
       description: "New Description",
+      access: [],
     };
     Permissionservice.createPermission.mockResolvedValueOnce({
       data: mockPermission,
@@ -130,6 +131,7 @@ describe("PermissionsList", () => {
     expect(Permissionservice.createPermission).toHaveBeenCalledWith({
       description: "New Description",
       name: "New Permission",
+      access: [],
     });
 
     // Wait for the fetchPermissionList function to complete after creating the permission
