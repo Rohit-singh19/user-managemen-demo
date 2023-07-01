@@ -22,7 +22,7 @@ let UserForm = () => {
       name: "",
       username: "",
       email: "",
-      role: "",
+      roleId: "",
     },
     errorMsg: "",
   });
@@ -77,26 +77,30 @@ let UserForm = () => {
 
   const validateForm = () => {
     const {
-      user: { name, username, email, role },
-      errorMsg,
+      user: { name, username, email, roleId },
     } = state;
 
     if (!name) {
-      throw new Error("Name is required");
+      setState((prev) => ({ ...prev, errorMsg: "Name is required" }));
+      return;
     }
 
     if (!username) {
-      throw new Error("Username is required");
+      setState((prev) => ({ ...prev, errorMsg: "Username is required" }));
+      return;
     }
 
     if (!email) {
-      throw new Error("Email is required");
+      setState((prev) => ({ ...prev, errorMsg: "Email is required" }));
+      return;
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      throw new Error("Invalid email format");
+      setState((prev) => ({ ...prev, errorMsg: "Invalid email format" }));
+      return;
     }
 
-    if (!role) {
-      throw new Error("Role is required");
+    if (!roleId) {
+      setState((prev) => ({ ...prev, errorMsg: "Role is required" }));
+      return;
     }
   };
 
@@ -112,9 +116,21 @@ let UserForm = () => {
       setState({ ...state, errorMsg: error.message });
     }
 
+    // { access, name: permissionName }
+    let resp = roleList?.find((ele) => ele?.id === parseInt(state.user.roleId));
+
+    let { access, name: permissionName, id } = resp;
+    let { roleId, ...other } = state.user;
+    let updatedData = {
+      ...other,
+      access,
+      role: permissionName,
+      role_id: id,
+    };
+
     if (type === "add") {
       try {
-        let response = await Userservice.createUser(state.user);
+        let response = await Userservice.createUser(updatedData);
         if (response) {
           navigate("/", { replace: true });
         }
@@ -124,7 +140,7 @@ let UserForm = () => {
       }
     } else if (type === "edit" && userId) {
       try {
-        let response = await Userservice.updateUser(state.user, userId);
+        let response = await Userservice.updateUser(updatedData, userId);
         if (response) {
           navigate("/", { replace: true });
         }
@@ -137,13 +153,24 @@ let UserForm = () => {
   let { user } = state;
   return (
     <div className="container m-auto px-5 py-6">
-      <h3 className="text-3xl font-medium leading-tight mb-2">
+      <h3
+        data-testid="form-title"
+        className="text-3xl font-medium leading-tight mb-2"
+      >
         {userId ? "Update User Detail" : "Add User"}
       </h3>
 
       <div className="mx-auto">
         <div className="grid grid-flow-row auto-rows-max">
           <div className="col ">
+            {state?.errorMsg && (
+              <div
+                className="mb-4 rounded-lg bg-red-100 px-6 py-5 text-base text-red-700"
+                role="alert"
+              >
+                {state?.errorMsg}
+              </div>
+            )}
             <form onSubmit={submitForm}>
               <div className="flex flex-col required:border-red-500 mb-5">
                 <label htmlFor="name">Name</label>
@@ -192,8 +219,8 @@ let UserForm = () => {
                   className="required:border-red-500 enabled:hover:border-gray-400 w-full rounded border-0 bg-neutral-100 px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                   data-te-select-init
                   // required={true}
-                  name="role"
-                  value={user.role}
+                  name="roleId"
+                  value={user.roleId}
                   onChange={updateInput}
                   placeholder="role"
                 >
@@ -201,7 +228,7 @@ let UserForm = () => {
                     select role
                   </option>
                   {roleList?.map((ele, i) => (
-                    <option key={`${ele?.name}-${i}`} value={ele?.name}>
+                    <option key={`${ele?.name}-${i}`} value={ele?.id}>
                       {ele?.name}
                     </option>
                   ))}

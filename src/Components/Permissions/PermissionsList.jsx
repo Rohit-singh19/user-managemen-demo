@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Permissionservice } from "../../Services/Permissionservice.ts";
 
 const PermissionsList = () => {
@@ -16,6 +16,7 @@ const PermissionsList = () => {
   const [newPermission, setNewPermission] = useState({
     name: "",
     description: "",
+    access: [],
   });
 
   async function fetchPermissionList() {
@@ -56,18 +57,6 @@ const PermissionsList = () => {
         await Permissionservice.deletePermission(id);
 
         setPermissions((prev) => prev.filter((ele) => ele?.id !== id));
-
-        // setPermissions({ ...state, loading: true });
-        // const response = await Userservice.deleteUser(userId);
-        // if (response) {
-        //   const response = await Userservice.getAllUsers();
-        //   setState({
-        //     ...state,
-        //     loading: false,
-        //     users: response.data,
-        //     filteredUsers: response.data,
-        //   });
-        // }
       }
     } catch (error) {
       setLog({
@@ -134,6 +123,7 @@ const PermissionsList = () => {
       setNewPermission({
         name: "",
         description: "",
+        access: [],
       });
 
       setIsLoading((prev) => ({
@@ -168,7 +158,7 @@ const PermissionsList = () => {
         </div>
       )}
 
-      {/* success */}
+      {/* error */}
       {log?.error && (
         <div
           className="mb-4 rounded-lg bg-red-100 px-6 py-5 text-base text-red-700"
@@ -197,6 +187,38 @@ const PermissionsList = () => {
           />
         </div>
 
+        <div className="flex flex-col required:border-red-500">
+          <label htmlFor="access">Access</label>
+          <select
+            required
+            className="required:border-red-500 enabled:hover:border-gray-400 w-full rounded border-0 bg-neutral-100 px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
+            id="access"
+            placeholder="permission name"
+            name="access"
+            value={newPermission?.access}
+            onChange={(event) => {
+              const selectedValues = Array.from(
+                event.target.selectedOptions,
+                (option) => option.value
+              );
+
+              setNewPermission((prev) => ({
+                ...prev,
+                access: selectedValues,
+              }));
+            }}
+            multiple
+          >
+            <option value="" disabled>
+              select permissions
+            </option>
+            <option value="read">View</option>
+            <option value="create">Create</option>
+            <option value="edit">Edit</option>
+            <option value="delete">Delete</option>
+          </select>
+        </div>
+
         <div className="flex flex-col my-5">
           <label htmlFor="description">Description</label>
           <textarea
@@ -219,6 +241,7 @@ const PermissionsList = () => {
           onClick={handleSubmit}
           className="inline-block rounded disabled:bg-gray-300  bg-sky-700 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
           disabled={isLoading?.button}
+          data-testid="add-role-button"
         >
           {newPermission?.id ? "Update" : "Add"} Permission
         </button>
@@ -293,7 +316,10 @@ const PermissionsList = () => {
                         >
                           <i className="fa fa-edit py-3 px-6 text-green-700"></i>
                         </button>
-                        <button onClick={() => handleDelete(ele?.id)}>
+                        <button
+                          data-testid={`delete-button-${index}`}
+                          onClick={() => handleDelete(ele?.id)}
+                        >
                           <i className="fa fa-trash text-red-700"></i>
                         </button>
                       </td>

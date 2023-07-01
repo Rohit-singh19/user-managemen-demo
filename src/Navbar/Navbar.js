@@ -1,6 +1,8 @@
-import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useContext } from "react";
+import { NavLink } from "react-router-dom";
+import { AuthContext } from "../Context/AuthContext";
 let Navbar = () => {
+  const { permissionInfo, userDetail, logout } = useContext(AuthContext);
   return (
     <>
       <nav
@@ -66,31 +68,45 @@ let Navbar = () => {
                 </NavLink>
               </li>
 
-              <li className="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
-                <NavLink
-                  className="text-neutral-500 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
-                  to="/comp/permissions"
-                  data-te-nav-link-ref
-                >
-                  Permissions
-                </NavLink>
-              </li>
+              {permissionInfo?.access?.includes("delete") && (
+                <li className="mb-4 lg:mb-0 lg:pr-2" data-te-nav-item-ref>
+                  <NavLink
+                    className="text-neutral-500 hover:text-neutral-700 focus:text-neutral-700 disabled:text-black/30 dark:text-neutral-200 dark:hover:text-neutral-300 dark:focus:text-neutral-300 lg:px-2 [&.active]:text-black/90 dark:[&.active]:text-neutral-400"
+                    to="/comp/permissions"
+                    data-te-nav-link-ref
+                  >
+                    Permissions
+                  </NavLink>
+                </li>
+              )}
             </ul>
           </div>
 
           <div className="relative flex items-center">
+            <p className="mr-2"> {userDetail?.name} </p>
+
             <div className="relative">
               <img
-                src="https://avatars.githubusercontent.com/u/77694147?v=4"
+                src="https://images.unsplash.com/photo-1529665253569-6d01c0eaf7b6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1985&q=80"
                 className="rounded-full"
                 style={{
-                  height: "25px",
-                  width: "25px",
+                  height: "35px",
+                  width: "35px",
                 }}
                 alt="avatar"
                 loading="lazy"
               />
             </div>
+
+            <button
+              title="logout"
+              className="mx-4"
+              onClick={() => {
+                logout();
+              }}
+            >
+              <i className="fa-solid fa-right-to-bracket"></i>
+            </button>
           </div>
         </div>
       </nav>

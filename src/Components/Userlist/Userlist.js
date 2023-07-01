@@ -1,10 +1,15 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Userservice } from "../../Services/Userservice";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../Context/AuthContext";
 
 let Userlist = () => {
   let [currentPage, setCurrentPage] = useState(1);
   let recordsPerPage = 10;
+
+  const { permissionInfo } = useContext(AuthContext);
+
+  // console.log(all);
 
   let [query, setQuery] = useState({
     text: "",
@@ -180,15 +185,23 @@ let Userlist = () => {
                   <th scope="col" className="py-3  ms-2">
                     ROLE
                   </th>
-                  <th scope="col" className="py-3  ms-2">
-                    VIEW
-                  </th>
-                  <th scope="col" className="py-3  ms-2">
-                    UPDATE
-                  </th>
-                  <th scope="col" className="py-3  ms-2">
-                    DELETE
-                  </th>
+                  {permissionInfo?.access?.includes("read") && (
+                    <th scope="col" className="py-3  ms-2">
+                      VIEW
+                    </th>
+                  )}
+
+                  {permissionInfo?.access?.includes("edit") && (
+                    <th scope="col" className="py-3  ms-2">
+                      UPDATE
+                    </th>
+                  )}
+
+                  {permissionInfo?.access?.includes("delete") && (
+                    <th scope="col" className="py-3  ms-2">
+                      DELETE
+                    </th>
+                  )}
                 </tr>
               </thead>
               {
@@ -204,22 +217,34 @@ let Userlist = () => {
                         <td className="py-3 px-6">{user.username}</td>
                         <td className="py-3 px-6">{user.email}</td>
                         <td className="py-3 px-6">{user.role}</td>
-                        <td className="py-3 px-6">
-                          <Link to={`/comp/userview/${user.id}`}>
-                            <i className="fa fa-eye me-4 "></i>
-                          </Link>
-                        </td>
-                        <td className="py-3 px-6">
-                          <Link to={`/edit?userId=${user.id}`}>
-                            <i className="fa fa-edit py-3 px-6 text-green-700"></i>
-                          </Link>
-                        </td>
-                        <td className="py-3 px-6">
-                          <button onClick={() => clickDelete(user.id)}>
-                            {" "}
-                            <i className="fa fa-trash text-red-700"></i>
-                          </button>
-                        </td>
+
+                        {permissionInfo?.access?.includes("read") && (
+                          <td className="py-3 px-6">
+                            <Link to={`/comp/userview/${user.id}`}>
+                              <i className="fa fa-eye me-4 "></i>
+                            </Link>
+                          </td>
+                        )}
+
+                        {permissionInfo?.access?.includes("edit") && (
+                          <td className="py-3 px-6">
+                            <Link to={`/edit?userId=${user.id}`}>
+                              <i className="fa fa-edit py-3 px-6 text-green-700"></i>
+                            </Link>
+                          </td>
+                        )}
+
+                        {permissionInfo?.access?.includes("delete") && (
+                          <td className="py-3 px-6">
+                            <button
+                              data-testid={`delete-${user?.id}`}
+                              onClick={() => clickDelete(user.id)}
+                            >
+                              {" "}
+                              <i className="fa fa-trash text-red-700"></i>
+                            </button>
+                          </td>
+                        )}
                       </tr>
                     );
                   })}

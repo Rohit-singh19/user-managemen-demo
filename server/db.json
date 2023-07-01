@@ -1,63 +1,64 @@
 {
   "users": [
     {
-      "id": 2,
-      "name": "Ervin Howell",
-      "username": "Antonette",
-      "email": "Shanna@melissa.tv",
-      "role": "test"
-    },
-    {
-      "id": 3,
-      "name": "Clementine Bauch",
-      "username": "Samantha",
-      "email": "Nathan@yesenia.net",
-      "role": "Admin"
-    },
-    {
-      "id": 4,
-      "name": "Patricia Lebsack",
-      "username": "Karianne",
-      "email": "Julianne.OConner@kory.org",
-      "role": "Super Admin"
-    },
-    {
-      "id": 5,
+      "id": 1,
       "name": "Chelsey Dietrich",
       "username": "Kamren",
       "email": "Lucio_Hettinger@annie.ca",
-      "role": "User"
+      "role": "Super Admin",
+      "role_id": 1
     },
     {
       "name": "test`",
       "username": "test_232",
       "email": "test@gmail.com",
       "role": "Admin",
-      "id": 6
+      "role_id": "",
+      "id": 2
     },
     {
       "name": "new",
       "username": "test12",
       "email": "test@fd",
-      "role": "Super Admin",
-      "id": 7
+      "role": "Admin",
+      "role_id": 2,
+      "id": 3,
+      "access": [
+        "create",
+        "edit",
+        "read"
+      ]
     }
   ],
   "permissions": [
     {
+      "id": 1,
+      "name": "Super Admin",
+      "description": "Permission to create and edit existing content",
+      "access": [
+        "create",
+        "edit",
+        "read",
+        "delete"
+      ]
+    },
+    {
       "id": 2,
       "name": "Admin",
-      "description": "Permission to create and edit existing content"
+      "description": "Permission to create and edit existing content",
+      "access": [
+        "create",
+        "edit",
+        "read"
+      ]
     },
     {
-      "name": "user",
-      "description": "Permission to view",
+      "name": "User",
+      "description": "Permission to view content",
+      "access": [
+        "read"
+      ],
       "id": 3
-    },
-    {
-      "name": "Super Admin",
-      "description": "Permission to create, delete and update",
-      "id": 4
     }
   ]
 }

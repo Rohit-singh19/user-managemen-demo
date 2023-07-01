@@ -25,4 +25,17 @@ export class Userservice {
     let dataURL = `${this.serverURL}/users/${userId}`;
     return axios.delete(dataURL);
   }
+
+  static checkUserExists(username) {
+    let dataURL = `${this.serverURL}/users?username=${username}`;
+    return axios
+      .get(dataURL)
+      .then((response) => {
+        return response.data?.length > 0 ? response?.data[0] : null;
+      })
+      .catch((error) => {
+        console.error(error);
+        return false;
+      });
+  }
 }

@@ -27,4 +27,17 @@ export class Permissionservice {
     let dataURL = `${this.serverURL}/users/${userId}/permissions`;
     return axios.post(dataURL, { permissionId });
   }
+
+  static fetchPermissionDetail(roleId) {
+    let dataURL = `${this.serverURL}/permissions?id=${roleId}`;
+    return axios
+      .get(dataURL)
+      .then((response) => {
+        return response.data?.length > 0 ? response.data[0] : null;
+      })
+      .catch((error) => {
+        console.error(error);
+        return false;
+      });
+  }
 }

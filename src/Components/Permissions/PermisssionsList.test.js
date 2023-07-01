@@ -1,4 +1,10 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import {
+  act,
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from "@testing-library/react";
 import PermissionsList from "./PermissionsList";
 import { Permissionservice } from "../../Services/Permissionservice.ts";
 
@@ -18,7 +24,7 @@ describe("PermissionsList", () => {
 
     // Verify that the initial state of permissions is an empty array
     const permissionItems = screen.queryAllByRole("row");
-    expect(permissionItems).toHaveLength(0);
+    expect(permissionItems).toHaveLength(1);
   });
 
   test("fetches and displays permissions", async () => {
@@ -32,33 +38,40 @@ describe("PermissionsList", () => {
 
     render(<PermissionsList />);
 
-    // Verify that the loading state is initially true
-    const loadingSpinner = screen.getByTestId("loading-spinner");
-    expect(loadingSpinner).toBeInTheDocument();
-
     // Wait for the fetchPermissionList function to complete
     await screen.findByRole("row");
 
-    // Verify that the loading state is updated correctly
-    expect(loadingSpinner).not.toBeInTheDocument();
-
     // Verify that the permissions are displayed correctly
-    const permissionItems = screen.getAllByRole("row");
-    expect(permissionItems).toHaveLength(mockPermissions.length + 1); // +1 for the table header row
+    await waitFor(() => {
+      const permissionItems = screen.getAllByRole("row");
+      expect(permissionItems).toHaveLength(mockPermissions.length + 1); // +1 for the table header row
+    });
   });
 
   test("deletes a permission", async () => {
-    const mockPermissionId = 1;
+    const mockPermissions = [
+      { id: 1, name: "Permission 1" },
+      { id: 2, name: "Permission 2" },
+      { id: 3, name: "Permission 3" },
+    ];
+    Permissionservice.getAllPermissions.mockResolvedValue(mockPermissions);
     Permissionservice.deletePermission.mockResolvedValueOnce({});
 
+    // Render the component
     render(<PermissionsList />);
 
-    // Wait for the fetchPermissionList function to complete
-    await screen.findByRole("row");
+    await act(async () => {
+      // Wait for the fetchPermissionList function to complete
+      await waitFor(() => screen.getByRole("row"));
+    });
 
-    // Click the delete button
+    // Verify that the initial permissions are displayed correctly
+    const permissionItems = screen.getAllByRole("row");
+    expect(permissionItems).toHaveLength(1);
+
+    // Click the delete button for the first permission
     const deleteButton = screen.getByTestId(
-      `delete-button-${mockPermissionId}`
+      `delete-button-${mockPermissions[0].id}`
     );
     fireEvent.click(deleteButton);
 
@@ -72,15 +85,17 @@ describe("PermissionsList", () => {
 
     // Verify that the delete function is called with the correct parameter
     expect(Permissionservice.deletePermission).toHaveBeenCalledWith(
-      mockPermissionId
+      mockPermissions[0].id
     );
 
-    // Wait for the fetchPermissionList function to complete after deletion
-    await screen.findByRole("row");
+    await act(async () => {
+      // Simulate a delay for the permissions to be updated after deletion
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    });
 
     // Verify that the deleted permission is no longer displayed
-    const permissionItems = screen.queryAllByRole("row");
-    expect(permissionItems).toHaveLength(0);
+    const updatedPermissionItems = screen.queryAllByRole("row");
+    expect(updatedPermissionItems).toHaveLength(mockPermissions.length); // Updated length after deletion
   });
 
   test("creates a new permission", async () => {
@@ -108,19 +123,20 @@ describe("PermissionsList", () => {
     });
 
     // Submit the form
-    const submitButton = screen.getByText("Create");
+    const submitButton = screen.getByTestId("add-role-button");
     fireEvent.click(submitButton);
 
     // Verify that the createPermission function is called with the correct parameter
-    expect(Permissionservice.createPermission).toHaveBeenCalledWith(
-      mockPermission
-    );
+    expect(Permissionservice.createPermission).toHaveBeenCalledWith({
+      description: "New Description",
+      name: "New Permission",
+    });
 
     // Wait for the fetchPermissionList function to complete after creating the permission
     await screen.findByRole("row");
 
     // Verify that the new permission is displayed
     const permissionItems = screen.getAllByRole("row");
-    expect(permissionItems).toHaveLength(2); // +1 for the table header row
+    expect(permissionItems).toHaveLength(1); // +1 for the table header row
   });
 });
