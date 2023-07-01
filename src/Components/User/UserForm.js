@@ -22,7 +22,7 @@ let UserForm = () => {
       name: "",
       username: "",
       email: "",
-      roleId: "",
+      role_id: "",
     },
     errorMsg: "",
   });
@@ -77,31 +77,32 @@ let UserForm = () => {
 
   const validateForm = () => {
     const {
-      user: { name, username, email, roleId },
+      user: { name, username, email, role_id },
     } = state;
 
     if (!name) {
       setState((prev) => ({ ...prev, errorMsg: "Name is required" }));
-      return;
+      return false;
     }
 
     if (!username) {
       setState((prev) => ({ ...prev, errorMsg: "Username is required" }));
-      return;
+      return false;
     }
 
     if (!email) {
       setState((prev) => ({ ...prev, errorMsg: "Email is required" }));
-      return;
+      return false;
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       setState((prev) => ({ ...prev, errorMsg: "Invalid email format" }));
-      return;
+      return false;
     }
 
-    if (!roleId) {
+    if (!role_id) {
       setState((prev) => ({ ...prev, errorMsg: "Role is required" }));
-      return;
+      return false;
     }
+    return true;
   };
 
   let submitForm = async (e) => {
@@ -110,17 +111,24 @@ let UserForm = () => {
     if (!type) return navigate("/");
 
     try {
-      validateForm();
+      let validate = validateForm();
+
+      if (!validate) return;
     } catch (error) {
       console.log("err::", error);
       setState({ ...state, errorMsg: error.message });
     }
 
+    if (!state.user.role_id)
+      return setState((prev) => ({ ...prev, errorMsg: "Role is required" }));
+
     // { access, name: permissionName }
-    let resp = roleList?.find((ele) => ele?.id === parseInt(state.user.roleId));
+    let resp = roleList?.find(
+      (ele) => ele?.id === parseInt(state.user.role_id)
+    );
 
     let { access, name: permissionName, id } = resp;
-    let { roleId, ...other } = state.user;
+    let { role_id, ...other } = state.user;
     let updatedData = {
       ...other,
       access,
@@ -219,8 +227,8 @@ let UserForm = () => {
                   className="required:border-red-500 enabled:hover:border-gray-400 w-full rounded border-0 bg-neutral-100 px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                   data-te-select-init
                   // required={true}
-                  name="roleId"
-                  value={user.roleId}
+                  name="role_id"
+                  value={user.role_id}
                   onChange={updateInput}
                   placeholder="role"
                 >
