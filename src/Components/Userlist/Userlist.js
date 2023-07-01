@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Userservice } from "../../Services/Userservice";
 import { Link } from "react-router-dom";
 
@@ -115,7 +115,7 @@ let Userlist = () => {
   return (
     <>
       <div className="container mx-auto px-10 ">
-        <Link to={"/comp/userform"}>
+        <Link to={"/add"}>
           <button className="rounded-r-full... bg-sky-700 w-40 h-10 mt-4 font-bold text-white">
             Add user
           </button>
@@ -210,7 +210,7 @@ let Userlist = () => {
                           </Link>
                         </td>
                         <td className="py-3 px-6">
-                          <Link to={`/comp/userupdate/${user.id}`}>
+                          <Link to={`/edit?userId=${user.id}`}>
                             <i className="fa fa-edit py-3 px-6 text-green-700"></i>
                           </Link>
                         </td>

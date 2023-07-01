@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Permissionservice } from "../../Services/Permissionservice";
+import { Permissionservice } from "../../Services/Permissionservice.ts";
 
 const PermissionsList = () => {
   const [permissions, setPermissions] = useState([]);
@@ -53,6 +53,10 @@ const PermissionsList = () => {
         `are you sure want to delete permission #${id}?`
       );
       if (confirmed) {
+        await Permissionservice.deletePermission(id);
+
+        setPermissions((prev) => prev.filter((ele) => ele?.id !== id));
+
         // setPermissions({ ...state, loading: true });
         // const response = await Userservice.deleteUser(userId);
         // if (response) {
@@ -66,11 +70,9 @@ const PermissionsList = () => {
         // }
       }
     } catch (error) {
-      // setState({
-      //   ...state,
-      //   loading: false,
-      //   errorMsg: error.message,
-      // });
+      setLog({
+        error: "Can't delete the permission",
+      });
     }
   };
 

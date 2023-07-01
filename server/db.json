@@ -5,7 +5,7 @@
       "name": "Ervin Howell",
       "username": "Antonette",
       "email": "Shanna@melissa.tv",
-      "role": "Admin"
+      "role": "test"
     },
     {
       "id": 3,
@@ -27,23 +27,37 @@
       "username": "Kamren",
       "email": "Lucio_Hettinger@annie.ca",
       "role": "User"
+    },
+    {
+      "name": "test`",
+      "username": "test_232",
+      "email": "test@gmail.com",
+      "role": "Admin",
+      "id": 6
+    },
+    {
+      "name": "new",
+      "username": "test12",
+      "email": "test@fd",
+      "role": "Super Admin",
+      "id": 7
     }
   ],
   "permissions": [
-    {
-      "name": "Super Admin",
-      "description": "Permission to create, delete and update",
-      "id": 1
-    },
     {
       "id": 2,
       "name": "Admin",
       "description": "Permission to create and edit existing content"
     },
     {
-      "name": "User",
-      "description": "Permission to read content",
+      "name": "user",
+      "description": "Permission to view",
       "id": 3
+    },
+    {
+      "name": "Super Admin",
+      "description": "Permission to create, delete and update",
+      "id": 4
     }
   ]
 }

@@ -61,7 +61,7 @@ let Userview = () => {
         </div>
       </div>
       <div>
-        <Link to="/comp/userlist">
+        <Link to="/">
           <input
             type="submit"
             className="rounded-r-full... bg-gray-300 w-40  h-10 mt-4 font-bold text-white"

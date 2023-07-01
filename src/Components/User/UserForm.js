@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Permissionservice } from "../../Services/Permissionservice";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
+import { Permissionservice } from "../../Services/Permissionservice.ts";
 import { Userservice } from "../../Services/Userservice";
-let Userform = () => {
+
+let UserForm = () => {
   let navigate = useNavigate();
+
+  const { type } = useParams();
+  const [searchParams] = useSearchParams("userId");
+
+  const userId = searchParams.get("userId");
 
   let [state, setState] = useState({
     loading: false,
@@ -18,6 +29,9 @@ let Userform = () => {
 
   const [roleList, setRoleList] = useState([]);
 
+  //   console.log("value : ", value);
+  //   console.log("value : ", searchParams.get("userId"));
+
   useEffect(() => {
     (async () => {
       try {
@@ -27,7 +41,29 @@ let Userform = () => {
         console.log(err);
       }
     })();
-  }, []);
+
+    // fetch data
+    if (userId) {
+      async function fetchData() {
+        try {
+          setState({ ...state, loading: true });
+          let response = await Userservice.getUser(userId);
+          setState({
+            ...state,
+            loading: false,
+            user: response.data,
+          });
+        } catch (error) {
+          setState({
+            ...state,
+            loading: false,
+            errorMsg: error.message,
+          });
+        }
+      }
+      fetchData();
+    }
+  }, [userId]);
 
   let updateInput = (e) => {
     setState({
@@ -39,22 +75,71 @@ let Userform = () => {
     });
   };
 
+  const validateForm = () => {
+    const {
+      user: { name, username, email, role },
+      errorMsg,
+    } = state;
+
+    if (!name) {
+      throw new Error("Name is required");
+    }
+
+    if (!username) {
+      throw new Error("Username is required");
+    }
+
+    if (!email) {
+      throw new Error("Email is required");
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      throw new Error("Invalid email format");
+    }
+
+    if (!role) {
+      throw new Error("Role is required");
+    }
+  };
+
   let submitForm = async (e) => {
     e.preventDefault();
+
+    if (!type) return navigate("/");
+
     try {
-      let response = await Userservice.createUser(state.user);
-      if (response) {
-        navigate("/comp/userlist", { replace: true });
-      }
+      validateForm();
     } catch (error) {
+      console.log("err::", error);
       setState({ ...state, errorMsg: error.message });
-      navigate("/comp/userform", { replace: false });
+    }
+
+    if (type === "add") {
+      try {
+        let response = await Userservice.createUser(state.user);
+        if (response) {
+          navigate("/", { replace: true });
+        }
+      } catch (error) {
+        setState({ ...state, errorMsg: error.message });
+        // navigate("/comp/userform", { replace: false });
+      }
+    } else if (type === "edit" && userId) {
+      try {
+        let response = await Userservice.updateUser(state.user, userId);
+        if (response) {
+          navigate("/", { replace: true });
+        }
+      } catch (error) {
+        setState({ ...state, errorMsg: error.message });
+        // navigate(`/comp/userupdate/${user.id}`, { replace: false });
+      }
     }
   };
   let { user } = state;
   return (
     <div className="container m-auto px-5 py-6">
-      <h3 className="text-3xl font-medium leading-tight mb-2">Add User</h3>
+      <h3 className="text-3xl font-medium leading-tight mb-2">
+        {userId ? "Update User Detail" : "Add User"}
+      </h3>
 
       <div className="mx-auto">
         <div className="grid grid-flow-row auto-rows-max">
@@ -66,7 +151,7 @@ let Userform = () => {
                   type="text"
                   name="name"
                   id="name"
-                  required={true}
+                  // required={true}
                   value={user.name}
                   onChange={updateInput}
                   className="required:border-red-500 enabled:hover:border-gray-400 w-full rounded border-0 bg-neutral-100 px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
@@ -78,7 +163,7 @@ let Userform = () => {
                 <input
                   id="username"
                   type="text"
-                  required={true}
+                  // required={true}
                   name="username"
                   value={user.username}
                   onChange={updateInput}
@@ -91,7 +176,7 @@ let Userform = () => {
                 <input
                   type="email"
                   id="email"
-                  required={true}
+                  // required={true}
                   name="email"
                   value={user.email}
                   onChange={updateInput}
@@ -106,13 +191,13 @@ let Userform = () => {
                   id="role"
                   className="required:border-red-500 enabled:hover:border-gray-400 w-full rounded border-0 bg-neutral-100 px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                   data-te-select-init
-                  required={true}
+                  // required={true}
                   name="role"
                   value={user.role}
                   onChange={updateInput}
                   placeholder="role"
                 >
-                  <option value="" selected>
+                  <option value="" selected disabled>
                     select role
                   </option>
                   {roleList?.map((ele, i) => (
@@ -127,10 +212,10 @@ let Userform = () => {
                 <div className="col">
                   <input
                     type="submit"
-                    className="rounded-full... me-4 bg-cyan-300 w-40 h-10  font-bold text-white"
-                    value="add"
+                    className="rounded-full... me-4 bg-cyan-300 h-10  font-bold text-white py-1 px-5"
+                    value={userId ? "Update User Detail" : "Add User"}
                   />
-                  <Link to="/comp/userlist">
+                  <Link to="/">
                     {" "}
                     <input
                       type="submit"
@@ -148,4 +233,4 @@ let Userform = () => {
   );
 };
 
-export default Userform;
+export default UserForm;
